@@ -93,8 +93,7 @@ wavelink-cli channel set-mix-volume <channel-id> <mix-id-or-name> <volume>
 wavelink-cli channel mute-in-mix <channel-id> <mix-id-or-name>
 wavelink-cli channel unmute-in-mix <channel-id> <mix-id-or-name>
 
-# Add an application to a channel
-wavelink-cli channel add-app <channel-id> <app-name>
+
 ```
 
 ### Inputs
