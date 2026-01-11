@@ -9,7 +9,6 @@ type OutputInfo = OutputDeviceInfo & { level: number; isMuted: boolean };
 type InputInfo = { deviceId: string; inputId: string; gain: number; isMuted: boolean };
 type ChannelInfo = { id: string; name: string };
 
-
 // Utility functions
 function exitWithError(message: string): never {
   console.error(`Error: ${message}`);
@@ -101,8 +100,6 @@ async function findChannelById(
   return channel ? { id: channel.id, name: channel.image?.name || channel.id } : null;
 }
 
-
-
 // Required finder wrappers that exit on not found
 async function requireMix(client: WaveLinkClient, mixId: string): Promise<MixInfo> {
   const mix = await findMixByIdOrName(client, mixId);
@@ -136,8 +133,6 @@ async function requireChannel(client: WaveLinkClient, channelId: string): Promis
   if (!channel) exitWithError(`Channel '${channelId}' not found`);
   return channel;
 }
-
-
 
 // Operation functions
 async function showApplicationInfo(client: WaveLinkClient): Promise<void> {
@@ -190,8 +185,6 @@ async function setInputMute(
   await client.setInputMute(input.deviceId, input.inputId, isMuted);
   console.log(`Successfully ${isMuted ? "muted" : "unmuted"} input '${input.inputId}'`);
 }
-
-
 
 async function listOutputs(client: WaveLinkClient): Promise<void> {
   const { outputDevices, mainOutput } = await client.getOutputDevices();
@@ -372,17 +365,17 @@ async function setSingleOutputForMix(
   if (targetDeviceAssigned && devicesReassigned > 0) {
     console.log(
       `Successfully set '${targetDevice.deviceId}' as the only output for mix '${mix.name}' ` +
-      `(reassigned ${devicesReassigned} other device(s) to '${otherMix.name}')`
+        `(reassigned ${devicesReassigned} other device(s) to '${otherMix.name}')`
     );
   } else if (targetDeviceAssigned) {
     console.log(
       `Successfully assigned '${targetDevice.deviceId}' to mix '${mix.name}' ` +
-      `(it was already the only device on this mix)`
+        `(it was already the only device on this mix)`
     );
   } else if (devicesReassigned > 0) {
     console.log(
       `'${targetDevice.deviceId}' was already assigned to mix '${mix.name}'. ` +
-      `Reassigned ${devicesReassigned} other device(s) to '${otherMix.name}'`
+        `Reassigned ${devicesReassigned} other device(s) to '${otherMix.name}'`
     );
   } else {
     console.log(`'${targetDevice.deviceId}' is already the only output for mix '${mix.name}'`);
@@ -644,9 +637,6 @@ channelCmd
       console.log(`Successfully unmuted channel '${channel.name}' in mix '${mix.name}'`);
     })
   );
-
-channelCmd
-
 
 // Input commands
 const inputCmd = program.command("input").description("Manage input devices");
