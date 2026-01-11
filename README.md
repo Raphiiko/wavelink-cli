@@ -92,6 +92,10 @@ wavelink-cli channel set-mix-volume <channel-id> <mix-id-or-name> <volume>
 # Mute/Unmute in a specific mix
 wavelink-cli channel mute-in-mix <channel-id> <mix-id-or-name>
 wavelink-cli channel unmute-in-mix <channel-id> <mix-id-or-name>
+wavelink-cli channel toggle-mute-in-mix <channel-id> <mix-id-or-name>
+
+# Isolate a channel in a mix (mute all others)
+wavelink-cli channel isolate <channel-id> <mix-id-or-name>
 
 
 ```

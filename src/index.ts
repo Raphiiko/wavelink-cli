@@ -630,6 +630,83 @@ channelCmd
     })
   );
 
+channelCmd
+  .command("toggle-mute-in-mix")
+  .description("Toggle channel mute state in a specific mix")
+  .addArgument(new Argument("<channel-id>", "ID of the channel"))
+  .addArgument(new Argument("<mix-id-or-name>", "ID or name of the mix (case-insensitive)"))
+  .action((channelId: string, mixId: string) =>
+    withClient(async (client) => {
+      const mix = await requireMix(client, mixId);
+      const { channels } = await client.getChannels();
+      const channel = channels.find((c) => c.id === channelId);
+
+      if (!channel) exitWithError(`Channel '${channelId}' not found`);
+
+      const mixAssignment = channel.mixes?.find((m) => m.id === mix.id);
+
+      if (!mixAssignment) {
+        exitWithError(`Channel '${channelId}' is not available in mix '${mix.name}'`);
+      }
+
+      const newMuted = !mixAssignment.isMuted;
+      await client.setChannelMixMute(channel.id, mix.id, newMuted);
+      console.log(
+        `Successfully toggled mute for channel '${channel.image?.name ?? channel.id}' in mix '${
+          mix.name
+        }'`
+      );
+    })
+  );
+
+channelCmd
+  .command("isolate")
+  .description("Mute all channels in a mix except for the specified one")
+  .addArgument(new Argument("<channel-id>", "ID of the channel to isolate"))
+  .addArgument(new Argument("<mix-id-or-name>", "ID or name of the mix (case-insensitive)"))
+  .action((channelId: string, mixId: string) =>
+    withClient(async (client) => {
+      const mix = await requireMix(client, mixId);
+      const targetChannel = await requireChannel(client, channelId);
+      const { channels } = await client.getChannels();
+
+      let mutedCount = 0;
+      let alreadyMutedCount = 0;
+
+      for (const channel of channels) {
+        // Find the channel's assignment for this mix
+        const assignment = channel.mixes?.find((m) => m.id === mix.id);
+
+        // If the channel isn't in this mix (unexpected for Wave Link, but possible in API types), skip
+        if (!assignment) continue;
+
+        if (channel.id === targetChannel.id) {
+          // This is the chosen channel: Unmute it
+          if (assignment.isMuted) {
+            await client.setChannelMixMute(channel.id, mix.id, false);
+            console.log(`Unmuted target channel '${channel.image?.name ?? channel.id}'`);
+          } else {
+            console.log(`Target channel '${channel.image?.name ?? channel.id}' is already unmuted`);
+          }
+        } else {
+          // This is NOT the chosen channel: Mute it
+          if (!assignment.isMuted) {
+            await client.setChannelMixMute(channel.id, mix.id, true);
+            mutedCount++;
+          } else {
+            alreadyMutedCount++;
+          }
+        }
+      }
+
+      console.log(
+        `SUCCESS: Isolated '${targetChannel.id}' in mix '${mix.name}'.\n` +
+          `  - Muted ${mutedCount} other channels.\n` +
+          `  - ${alreadyMutedCount} channels were already muted.`
+      );
+    })
+  );
+
 // Input commands
 const inputCmd = program.command("input").description("Manage input devices");
 
