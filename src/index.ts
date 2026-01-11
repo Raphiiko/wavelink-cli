@@ -336,16 +336,8 @@ async function setSingleOutputForMix(
   const targetDevice = await requireOutputDevice(client, deviceId);
 
   const { outputDevices } = await client.getOutputDevices();
-  const { mixes } = await client.getMixes();
 
-  const otherMix = mixes.find((m) => m.id !== mix.id);
-  if (!otherMix) {
-    exitWithError(
-      "Cannot use 'single' command with only one mix available. At least two mixes are required."
-    );
-  }
-
-  let devicesReassigned = 0;
+  let devicesRemoved = 0;
   let targetDeviceAssigned = false;
 
   for (const device of outputDevices) {
@@ -356,26 +348,26 @@ async function setSingleOutputForMix(
         await client.switchOutputMix(device.id, output.id, mix.id);
         targetDeviceAssigned = true;
       } else if (!isTargetDevice && output.mixId === mix.id) {
-        await client.switchOutputMix(device.id, output.id, otherMix.id);
-        devicesReassigned++;
+        await client.removeOutputFromMix(device.id, output.id);
+        devicesRemoved++;
       }
     }
   }
 
-  if (targetDeviceAssigned && devicesReassigned > 0) {
+  if (targetDeviceAssigned && devicesRemoved > 0) {
     console.log(
       `Successfully set '${targetDevice.deviceId}' as the only output for mix '${mix.name}' ` +
-        `(reassigned ${devicesReassigned} other device(s) to '${otherMix.name}')`
+        `(removed ${devicesRemoved} other device(s) from the mix)`
     );
   } else if (targetDeviceAssigned) {
     console.log(
       `Successfully assigned '${targetDevice.deviceId}' to mix '${mix.name}' ` +
-        `(it was already the only device on this mix)`
+        `(it is now the only device on this mix)`
     );
-  } else if (devicesReassigned > 0) {
+  } else if (devicesRemoved > 0) {
     console.log(
       `'${targetDevice.deviceId}' was already assigned to mix '${mix.name}'. ` +
-        `Reassigned ${devicesReassigned} other device(s) to '${otherMix.name}'`
+        `Removed ${devicesRemoved} other device(s) from the mix.`
     );
   } else {
     console.log(`'${targetDevice.deviceId}' is already the only output for mix '${mix.name}'`);
