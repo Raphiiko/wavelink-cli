@@ -22,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed the requirement for at least two mixes when using `mix set-output`.
 
 
+## [0.0.5] - 2026-01-11
+
+### Added
+- Added `output toggle-mute` command.
+- Added `input toggle-mute` command.
+
 ## [0.0.4] - 2026-01-11
 
 ### Added

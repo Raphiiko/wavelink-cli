@@ -50,6 +50,7 @@ wavelink-cli output set-volume <output-id> <volume>
 # Mute/Unmute
 wavelink-cli output mute <output-id>
 wavelink-cli output unmute <output-id>
+wavelink-cli output toggle-mute <output-id>
 ```
 
 ### Mixes
@@ -113,6 +114,7 @@ wavelink-cli input set-gain <input-id> <gain>
 # Mute/Unmute
 wavelink-cli input mute <input-id>
 wavelink-cli input unmute <input-id>
+wavelink-cli input toggle-mute <input-id>
 ```
 
 ### General

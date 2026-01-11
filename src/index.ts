@@ -457,6 +457,17 @@ outputCmd
   .addArgument(new Argument("<output-id>", "ID of the output device"))
   .action((outputId: string) => withClient((client) => setOutputMute(client, outputId, false)));
 
+outputCmd
+  .command("toggle-mute")
+  .description("Toggle output device mute state")
+  .addArgument(new Argument("<output-id>", "ID of the output device"))
+  .action((outputId: string) =>
+    withClient(async (client) => {
+      const output = await requireOutput(client, outputId);
+      await setOutputMute(client, outputId, !output.isMuted);
+    })
+  );
+
 // Mix commands
 const mixCmd = program.command("mix").description("Manage mixes");
 
@@ -736,5 +747,16 @@ inputCmd
   .description("Unmute an input device")
   .addArgument(new Argument("<input-id>", "ID of the input device"))
   .action((inputId: string) => withClient((client) => setInputMute(client, inputId, false)));
+
+inputCmd
+  .command("toggle-mute")
+  .description("Toggle input device mute state")
+  .addArgument(new Argument("<input-id>", "ID of the input device"))
+  .action((inputId: string) =>
+    withClient(async (client) => {
+      const input = await requireInput(client, inputId);
+      await setInputMute(client, inputId, !input.isMuted);
+    })
+  );
 
 await program.parseAsync();
