@@ -121,3 +121,7 @@ wavelink-cli info
 ## License
 
 MIT
+
+## Disclaimer
+
+This is an unofficial library and is not affiliated with or endorsed by Elgato or Corsair.
