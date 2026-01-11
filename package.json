@@ -1,0 +1,57 @@
+{
+  "name": "@raphiiko/wavelink-cli",
+  "version": "0.0.1",
+  "description": "Command line interface for Elgato Wave Link 3.0",
+  "author": "Raphiiko",
+  "license": "MIT",
+  "homepage": "https://github.com/Raphiiko/wavelink-cli",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Raphiiko/wavelink-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Raphiiko/wavelink-cli/issues"
+  },
+  "keywords": [
+    "wavelink",
+    "cli",
+    "typescript"
+  ],
+  "module": "src/index.ts",
+  "type": "module",
+  "bin": {
+    "wavelink-cli": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "bun build ./src/index.ts --target=node --outfile dist/index.js",
+    "start": "bun run src/index.ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "typecheck": "tsc --noEmit",
+    "check": "bun run format:check && bun run lint && bun run typecheck",
+    "prepublishOnly": "bun run build && bun run check"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@typescript-eslint/eslint-plugin": "^8.52.0",
+    "@typescript-eslint/parser": "^8.52.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.7.4",
+    "typescript": "^5"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@raphiiko/wavelink-ts": "^1.1.0",
+    "commander": "^14.0.2"
+  }
+}
