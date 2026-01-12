@@ -1,5 +1,9 @@
 # @raphiiko/wavelink-cli
 
+[![npm version](https://img.shields.io/npm/v/@raphiiko/wavelink-cli.svg)](https://www.npmjs.com/package/@raphiiko/wavelink-cli)
+[![npm downloads](https://img.shields.io/npm/dm/@raphiiko/wavelink-cli.svg)](https://www.npmjs.com/package/@raphiiko/wavelink-cli)
+[![license](https://img.shields.io/npm/l/@raphiiko/wavelink-cli.svg)](https://github.com/Raphiiko/wavelink-cli/blob/main/LICENSE)
+
 A command-line interface for controlling Elgato Wave Link 3.0.
 
 > **Note:** This CLI is based on Wave Link 3.0 Beta Update 3. Keep in mind things might break with future Wave Link updates.
