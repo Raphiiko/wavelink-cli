@@ -3,9 +3,9 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "wave-link-cli",
+      "name": "@raphiiko/wavelink-cli",
       "dependencies": {
-        "@raphiiko/wavelink-ts": "^1.1.0",
+        "@raphiiko/wavelink-ts": "^1.2.0",
         "commander": "^14.0.2",
       },
       "devDependencies": {
@@ -16,6 +16,7 @@
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-prettier": "^5.5.4",
         "prettier": "^3.7.4",
+        "typescript": "^5",
       },
       "peerDependencies": {
         "typescript": "^5",
@@ -51,7 +52,7 @@
 
     "@pkgr/core": ["@pkgr/core@0.2.9", "", {}, "sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA=="],
 
-    "@raphiiko/wavelink-ts": ["@raphiiko/wavelink-ts@1.1.0", "", { "dependencies": { "ws": "^8.16.0" } }, "sha512-LoDrXsFt4CIEeU8nhzM4m1CiV2ZWJ2BefcQ06qgFlbVUDAJrzJKrREcAJIrF7q1k53hKNhyh+1PvqyaiptHIMw=="],
+    "@raphiiko/wavelink-ts": ["@raphiiko/wavelink-ts@1.2.0", "", { "dependencies": { "ws": "^8.16.0" } }, "sha512-yeQUsJa13H1XeNyFXM/uq3KOtZYdVCa/AFnhbWnfydFEXJocIvsC7ZhrOcCggKGBbzW3oAuzbvzCi3DYZIZq1A=="],
 
     "@types/bun": ["@types/bun@1.3.5", "", { "dependencies": { "bun-types": "1.3.5" } }, "sha512-RnygCqNrd3srIPEWBd5LFeUYG7plCoH2Yw9WaZGyNmdTEei+gWaHqydbaIRkIkcbXwhBT94q78QljxN0Sk838w=="],
 
