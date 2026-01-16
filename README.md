@@ -6,11 +6,11 @@
 
 A command-line interface for controlling Elgato Wave Link 3.0.
 
-> **Note:** This CLI is based on Wave Link 3.0 Beta Update 3. Keep in mind things might break with future Wave Link updates.
+> **Note:** This CLI is based on Wave Link 3.0 Beta Update 4. Keep in mind things might break with future Wave Link updates.
 
 ## Prerequisites
 
-- **Elgato Wave Link 3.0** (Beta Update 3 or newer) must be installed and running.
+- **Elgato Wave Link 3.0** (Beta Update 4 or newer) must be installed and running.
 - **Node.js 18+** or **Bun 1.0+**
 
 ## Installation

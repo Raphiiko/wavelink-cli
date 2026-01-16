@@ -39,7 +39,7 @@ export async function listOutputs(client: WaveLinkClient): Promise<void> {
   }
 
   for (const device of outputDevices) {
-    const isMain = device.id === mainOutput ? " (MAIN OUTPUT)" : "";
+    const isMain = device.id === mainOutput.outputDeviceId ? " (MAIN OUTPUT)" : "";
     console.log(`Device: ${device.name || device.id}${isMain}`);
     console.log(`  Device ID: ${device.id}`);
     console.log(`  Wave Device: ${formatMuted(device.isWaveDevice)}`);

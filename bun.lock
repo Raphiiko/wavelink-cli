@@ -5,7 +5,7 @@
     "": {
       "name": "@raphiiko/wavelink-cli",
       "dependencies": {
-        "@raphiiko/wavelink-ts": "^1.2.0",
+        "@raphiiko/wavelink-ts": "^1.3.0",
         "commander": "^14.0.2",
       },
       "devDependencies": {
@@ -52,7 +52,7 @@
 
     "@pkgr/core": ["@pkgr/core@0.2.9", "", {}, "sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA=="],
 
-    "@raphiiko/wavelink-ts": ["@raphiiko/wavelink-ts@1.2.0", "", { "dependencies": { "ws": "^8.16.0" } }, "sha512-yeQUsJa13H1XeNyFXM/uq3KOtZYdVCa/AFnhbWnfydFEXJocIvsC7ZhrOcCggKGBbzW3oAuzbvzCi3DYZIZq1A=="],
+    "@raphiiko/wavelink-ts": ["@raphiiko/wavelink-ts@1.3.0", "", { "dependencies": { "ws": "^8.16.0" } }, "sha512-zodpHroRKGMNUDBm4XyxHYYuBGnWCrcxk4Z5NV2EojfeGuNaQv1LWiBtpiQ7A/VZ6Uv+WlH6yBUBc2pXuqxsnw=="],
 
     "@types/bun": ["@types/bun@1.3.5", "", { "dependencies": { "bun-types": "1.3.5" } }, "sha512-RnygCqNrd3srIPEWBd5LFeUYG7plCoH2Yw9WaZGyNmdTEei+gWaHqydbaIRkIkcbXwhBT94q78QljxN0Sk838w=="],
 
