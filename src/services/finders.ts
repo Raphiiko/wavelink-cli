@@ -51,6 +51,8 @@ export async function findInputByIdOrName(
       return {
         deviceId: device.id,
         deviceName: device.name || device.id,
+        deviceType: device.deviceType,
+        isWaveDevice: WaveLinkClient.isWaveDevice(device),
         inputId: input.id,
         inputName: input.name || input.id,
         gain: input.gain.value,
@@ -66,6 +68,8 @@ export async function findInputByIdOrName(
       return {
         deviceId: device.id,
         deviceName: device.name || device.id,
+        deviceType: device.deviceType,
+        isWaveDevice: WaveLinkClient.isWaveDevice(device),
         inputId: input.id,
         inputName: input.name || input.id,
         gain: input.gain.value,
@@ -93,7 +97,8 @@ export async function findOutputByIdOrName(
         outputId: output.id,
         currentMixId: output.mixId,
         deviceName: device.name || device.id,
-        isWaveDevice: device.isWaveDevice,
+        deviceType: device.deviceType,
+        isWaveDevice: WaveLinkClient.isWaveDevice(device),
         outputName: output.name || output.id,
         level: output.level,
         isMuted: output.isMuted,
@@ -110,7 +115,8 @@ export async function findOutputByIdOrName(
         outputId: output.id,
         currentMixId: output.mixId,
         deviceName: device.name || device.id,
-        isWaveDevice: device.isWaveDevice,
+        deviceType: device.deviceType,
+        isWaveDevice: WaveLinkClient.isWaveDevice(device),
         outputName: output.name || output.id,
         level: output.level,
         isMuted: output.isMuted,
@@ -147,4 +153,96 @@ export async function requireChannel(
   const channel = await findChannelByIdOrName(client, channelId);
   if (!channel) exitWithError(`Channel '${channelId}' not found`);
   return channel;
+}
+
+export type InputEffectInfo = {
+  deviceId: string;
+  inputId: string;
+  effectId: string;
+  effectName: string;
+  isDsp: boolean;
+};
+
+/**
+ * Resolve an effect on an input by id or name, searching both the software
+ * `effects` and DSP `dspEffects` collections. Exits if the input or effect is
+ * not found.
+ */
+export async function requireInputEffect(
+  client: WaveLinkClient,
+  inputIdOrName: string,
+  effectIdOrName: string
+): Promise<InputEffectInfo> {
+  const { inputDevices } = await client.getInputDevices();
+  const lowerInput = inputIdOrName.toLowerCase();
+  const lowerEffect = effectIdOrName.toLowerCase();
+
+  for (const device of inputDevices) {
+    const input = device.inputs.find(
+      (i) => i.id.toLowerCase() === lowerInput || (i.name || "").toLowerCase() === lowerInput
+    );
+    if (!input) continue;
+
+    for (const [collection, isDsp] of [
+      [input.effects, false],
+      [input.dspEffects, true],
+    ] as const) {
+      const effect = collection?.find(
+        (e) => e.id.toLowerCase() === lowerEffect || (e.name || "").toLowerCase() === lowerEffect
+      );
+      if (effect) {
+        return {
+          deviceId: device.id,
+          inputId: input.id,
+          effectId: effect.id,
+          effectName: effect.name || effect.id,
+          isDsp,
+        };
+      }
+    }
+
+    exitWithError(`Effect '${effectIdOrName}' not found on input '${input.name || input.id}'`);
+  }
+
+  exitWithError(`Input '${inputIdOrName}' not found`);
+}
+
+export type ChannelEffectInfo = {
+  channelId: string;
+  channelName: string;
+  effectId: string;
+  effectName: string;
+};
+
+/**
+ * Resolve an effect on a channel by id or name. Exits if the channel or effect
+ * is not found.
+ */
+export async function requireChannelEffect(
+  client: WaveLinkClient,
+  channelIdOrName: string,
+  effectIdOrName: string
+): Promise<ChannelEffectInfo> {
+  const { channels } = await client.getChannels();
+  const lowerChannel = channelIdOrName.toLowerCase();
+  const lowerEffect = effectIdOrName.toLowerCase();
+
+  const channel = channels.find(
+    (c) => c.id.toLowerCase() === lowerChannel || getChannelName(c).toLowerCase() === lowerChannel
+  );
+  if (!channel) exitWithError(`Channel '${channelIdOrName}' not found`);
+
+  const effect = channel.effects?.find(
+    (e) => e.id.toLowerCase() === lowerEffect || (e.name || "").toLowerCase() === lowerEffect
+  );
+  if (!effect) {
+    exitWithError(`Effect '${effectIdOrName}' not found on channel '${getChannelName(channel)}'`);
+  }
+
+  return {
+    channelId: channel.id,
+    channelName: getChannelName(channel),
+    effectId: effect.id,
+    effectName: effect.name || effect.id,
+  };
 }

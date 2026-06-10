@@ -5,12 +5,13 @@ import { registerOutputCommands } from "./commands/output.js";
 import { registerMixCommands } from "./commands/mix.js";
 import { registerChannelCommands } from "./commands/channel.js";
 import { registerInputCommands } from "./commands/input.js";
+import { registerMonitorCommands } from "./commands/monitor.js";
 
 const program = new Command();
 
 program
   .name("wavelink-cli")
-  .description("Manage Elgato Wave Link 3.0 via command line")
+  .description("Manage Elgato Wave Link 3 via command line")
   .version(process.env.PKG_VERSION || "0.0.0");
 
 registerInfoCommand(program);
@@ -18,5 +19,6 @@ registerOutputCommands(program);
 registerMixCommands(program);
 registerChannelCommands(program);
 registerInputCommands(program);
+registerMonitorCommands(program);
 
 await program.parseAsync();

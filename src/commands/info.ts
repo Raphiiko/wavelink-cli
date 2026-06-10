@@ -7,6 +7,15 @@ export async function showApplicationInfo(client: WaveLinkClient): Promise<void>
   console.log("\n=== Wave Link Application Info ===\n");
   console.log(`Application ID: ${info.appID}`);
   console.log(`Name: ${info.name}`);
+  if (info.version) {
+    console.log(`Version: ${info.version}`);
+  }
+  if (info.build !== undefined) {
+    console.log(`Build: ${info.build}`);
+  }
+  if (info.operatingSystem) {
+    console.log(`Operating System: ${info.operatingSystem}`);
+  }
   console.log(`Interface Revision: ${info.interfaceRevision}`);
   console.log();
 }

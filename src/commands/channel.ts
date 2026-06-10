@@ -1,9 +1,9 @@
 import { WaveLinkClient } from "@raphiiko/wavelink-ts";
 import { Argument, Command } from "commander";
 import { withClient } from "../services/client.js";
-import { requireChannel, requireMix } from "../services/finders.js";
-import { formatPercent, formatMuted, getChannelName } from "../utils/format.js";
-import { parsePercent } from "../utils/validation.js";
+import { requireChannel, requireMix, requireChannelEffect } from "../services/finders.js";
+import { formatPercent, formatMuted, getChannelName, formatEffects } from "../utils/format.js";
+import { parsePercent, parseOnOff } from "../utils/validation.js";
 import { exitWithError } from "../utils/error.js";
 
 export async function listChannels(client: WaveLinkClient): Promise<void> {
@@ -26,6 +26,11 @@ export async function listChannels(client: WaveLinkClient): Promise<void> {
 
     if (channel.apps?.length) {
       console.log(`  Apps: ${channel.apps.map((a) => a.name || a.id).join(", ")}`);
+    }
+
+    const effectsList = formatEffects(channel.effects);
+    if (effectsList) {
+      console.log(`  Effects: ${effectsList}`);
     }
 
     if (channel.mixes?.length) {
@@ -185,6 +190,41 @@ export function registerChannelCommands(program: Command): void {
         const newMuted = !mixAssignment.isMuted;
         await client.setChannelMixMute(channel.id, mix.id, newMuted);
         console.log(`Successfully toggled mute for channel '${channel.name}' in mix '${mix.name}'`);
+      })
+    );
+
+  channelCmd
+    .command("effect")
+    .description("Enable or disable an audio effect on a channel (e.g. Elgato EQ)")
+    .addArgument(
+      new Argument("<channel-id-or-name>", "ID or name of the channel (case-insensitive)")
+    )
+    .addArgument(new Argument("<effect-id-or-name>", "ID or name of the effect (case-insensitive)"))
+    .addArgument(new Argument("<state>", "on or off"))
+    .action((channelId: string, effectId: string, state: string) => {
+      const isEnabled = parseOnOff(state, "Effect state");
+      return withClient(async (client) => {
+        const effect = await requireChannelEffect(client, channelId, effectId);
+        await client.setChannelEffectEnabled(effect.channelId, effect.effectId, isEnabled);
+        console.log(
+          `Successfully ${isEnabled ? "enabled" : "disabled"} effect ` +
+            `'${effect.effectName}' on channel '${effect.channelName}'`
+        );
+      });
+    });
+
+  channelCmd
+    .command("add-app")
+    .description("Route an application to a channel")
+    .addArgument(new Argument("<app-id>", "Application identifier (e.g. com.spotify.music)"))
+    .addArgument(
+      new Argument("<channel-id-or-name>", "ID or name of the channel (case-insensitive)")
+    )
+    .action((appId: string, channelId: string) =>
+      withClient(async (client) => {
+        const channel = await requireChannel(client, channelId);
+        await client.addToChannel({ appId, channelId: channel.id });
+        console.log(`Successfully routed app '${appId}' to channel '${channel.name}'`);
       })
     );
 

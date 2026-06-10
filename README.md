@@ -4,13 +4,13 @@
 [![npm downloads](https://img.shields.io/npm/dm/@raphiiko/wavelink-cli.svg)](https://www.npmjs.com/package/@raphiiko/wavelink-cli)
 [![license](https://img.shields.io/npm/l/@raphiiko/wavelink-cli.svg)](https://github.com/Raphiiko/wavelink-cli/blob/main/LICENSE)
 
-A command-line interface for controlling Elgato Wave Link 3.0.
+A command-line interface for controlling Elgato Wave Link 3.
 
-> **Note:** This CLI is based on Wave Link 3.0 Beta Update 4. Keep in mind things might break with future Wave Link updates.
+> **Note:** This CLI targets Wave Link **3.1.1 (build 3113)**, reverse engineered from Stream Deck plugin v3.0.2.290. Keep in mind things might break with future Wave Link updates.
 
 ## Prerequisites
 
-- **Elgato Wave Link 3.0** (Beta Update 4 or newer) must be installed and running.
+- **Elgato Wave Link 3.1** (or newer) must be installed and running.
 - **Node.js 18+** or **Bun 1.0+**
 
 ## Installation
@@ -39,7 +39,7 @@ wavelink-cli <category> <command> [options]
 Manage your output devices (Headphones, Speakers, etc).
 
 ```bash
-# List all output devices (shows names, IDs, and Wave Device status)
+# List all output devices (shows names, IDs, device type, and current mix)
 wavelink-cli output list
 
 # Assign an output device to a mix (use ID or name)
@@ -49,6 +49,10 @@ wavelink-cli output assign <output-id-or-name> <mix-id-or-name>
 # Remove an output device from its mix
 wavelink-cli output unassign <output-id-or-name>
 # Example: wavelink-cli output unassign "Speakers (Realtek)"
+
+# Set the main output device
+wavelink-cli output set-main <output-id-or-name>
+# Example: wavelink-cli output set-main "Speakers (Realtek)"
 
 # Set volume (0-100)
 wavelink-cli output set-volume <output-id-or-name> <volume>
@@ -113,18 +117,34 @@ wavelink-cli channel toggle-mute-in-mix <channel-id-or-name> <mix-id-or-name>
 # Isolate a channel in a mix (mute all others)
 wavelink-cli channel isolate <channel-id-or-name> <mix-id-or-name>
 # Example: wavelink-cli channel isolate voice "Personal Mix"
+
+# Enable/disable an effect on a channel (e.g. Elgato EQ)
+wavelink-cli channel effect <channel-id-or-name> <effect-id-or-name> <on|off>
+# Example: wavelink-cli channel effect "Music" "Elgato EQ" off
+
+# Route an application to a channel
+wavelink-cli channel add-app <app-id> <channel-id-or-name>
+# Example: wavelink-cli channel add-app com.spotify.music "Music"
 ```
 
 ### Inputs
 Control hardware inputs (Microphones, etc).
 
 ```bash
-# List all input devices (shows names, IDs, gain ranges, gain lock status, and mic/PC mix settings)
+# List all input devices (shows names, IDs, device type, gain ranges, mic/PC mix, and effects)
 wavelink-cli input list
 
 # Set gain (0-100, use ID or name)
 wavelink-cli input set-gain <input-id-or-name> <gain>
 # Example: wavelink-cli input set-gain "Microphone (Blue Yeti)" 65
+
+# Set the Mic/PC balance (0-100, Elgato Wave devices only)
+wavelink-cli input set-mic-pc-mix <input-id-or-name> <value>
+# Example: wavelink-cli input set-mic-pc-mix "Wave:3" 50
+
+# Enable/disable an effect on an input (Elgato Wave devices only; covers software and DSP effects)
+wavelink-cli input effect <input-id-or-name> <effect-id-or-name> <on|off>
+# Example: wavelink-cli input effect "Wave:3" "Clipguard" on
 
 # Mute/Unmute
 wavelink-cli input mute <input-id-or-name>
@@ -133,10 +153,25 @@ wavelink-cli input toggle-mute <input-id-or-name>
 # Example: wavelink-cli input toggle-mute "Wave:3"
 ```
 
+### Monitor
+Watch Wave Link events in real time. These commands run until you press `Ctrl+C`.
+
+```bash
+# Watch device, channel, and mix change notifications
+wavelink-cli monitor changes
+
+# Watch focused-application changes (auto-switching context)
+wavelink-cli monitor focus
+
+# Watch level-meter values for an input, output, channel, or mix
+wavelink-cli monitor levels <input|output|channel|mix> <id-or-name>
+# Example: wavelink-cli monitor levels channel "Music"
+```
+
 ### General
 
 ```bash
-# Show Wave Link application info
+# Show Wave Link application info (name, version, build, OS)
 wavelink-cli info
 ```
 

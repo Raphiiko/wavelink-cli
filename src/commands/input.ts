@@ -1,9 +1,9 @@
 import { WaveLinkClient } from "@raphiiko/wavelink-ts";
 import { Argument, Command } from "commander";
 import { withClient } from "../services/client.js";
-import { requireInput } from "../services/finders.js";
-import { formatPercent, formatMuted } from "../utils/format.js";
-import { parsePercent } from "../utils/validation.js";
+import { requireInput, requireInputEffect } from "../services/finders.js";
+import { formatPercent, formatMuted, formatDeviceType, formatEffects } from "../utils/format.js";
+import { parsePercent, parseOnOff } from "../utils/validation.js";
 
 export async function setInputGain(
   client: WaveLinkClient,
@@ -38,7 +38,7 @@ export async function listInputs(client: WaveLinkClient): Promise<void> {
   for (const device of inputDevices) {
     console.log(`Device: ${device.name || device.id}`);
     console.log(`  Device ID: ${device.id}`);
-    console.log(`  Wave Device: ${formatMuted(device.isWaveDevice)}`);
+    console.log(`  Device Type: ${formatDeviceType(device.deviceType)}`);
 
     if (device.inputs.length === 0) {
       console.log("  No inputs available");
@@ -56,20 +56,19 @@ export async function listInputs(client: WaveLinkClient): Promise<void> {
         console.log(
           `    Gain: ${formatPercent(input.gain.value)} (min: ${gainMin}, max: ${gainMax})`
         );
-        if (input.isGainLockOn !== undefined) {
-          console.log(`    Gain Lock: ${formatMuted(input.isGainLockOn)}`);
-        }
         console.log(`    Muted: ${formatMuted(input.isMuted)}`);
         if (input.micPcMix) {
           console.log(
             `    Mic/PC Mix: ${formatPercent(input.micPcMix.value)}${input.micPcMix.isInverted ? " (inverted)" : ""}`
           );
         }
-        if (input.effects?.length) {
-          const effectsList = input.effects
-            .map((e) => `${e.name || e.id} (${e.isEnabled ? "ON" : "OFF"})`)
-            .join(", ");
+        const effectsList = formatEffects(input.effects);
+        if (effectsList) {
           console.log(`    Effects: ${effectsList}`);
+        }
+        const dspEffectsList = formatEffects(input.dspEffects);
+        if (dspEffectsList) {
+          console.log(`    DSP Effects: ${dspEffectsList}`);
         }
       }
     }
@@ -125,4 +124,52 @@ export function registerInputCommands(program: Command): void {
         await setInputMute(client, inputId, !input.isMuted);
       })
     );
+
+  inputCmd
+    .command("set-mic-pc-mix")
+    .description("Set the Mic/PC balance for an input (Elgato Wave devices only)")
+    .addArgument(
+      new Argument("<input-id-or-name>", "ID or name of the input device (case-insensitive)")
+    )
+    .addArgument(new Argument("<value>", "Mic/PC balance (0-100, 0 = all mic, 100 = all PC)"))
+    .action((inputId: string, value: string) => {
+      const percent = parsePercent(value, "Mic/PC mix");
+      return withClient(async (client) => {
+        const input = await requireInput(client, inputId);
+        if (!input.isWaveDevice) {
+          console.warn(
+            `Warning: '${input.deviceName}' is not an Elgato Wave device; ` +
+              "Mic/PC mix may have no effect."
+          );
+        }
+        await client.setInputMicPcMix(input.deviceId, input.inputId, percent / 100);
+        console.log(`Successfully set Mic/PC mix for input '${input.inputName}' to ${percent}%`);
+      });
+    });
+
+  inputCmd
+    .command("effect")
+    .description("Enable or disable an audio effect on an input")
+    .addArgument(
+      new Argument("<input-id-or-name>", "ID or name of the input device (case-insensitive)")
+    )
+    .addArgument(new Argument("<effect-id-or-name>", "ID or name of the effect (case-insensitive)"))
+    .addArgument(new Argument("<state>", "on or off"))
+    .action((inputId: string, effectId: string, state: string) => {
+      const isEnabled = parseOnOff(state, "Effect state");
+      return withClient(async (client) => {
+        const effect = await requireInputEffect(client, inputId, effectId);
+        await client.setInputEffectEnabled(
+          effect.deviceId,
+          effect.inputId,
+          effect.effectId,
+          isEnabled,
+          effect.isDsp
+        );
+        console.log(
+          `Successfully ${isEnabled ? "enabled" : "disabled"} ` +
+            `${effect.isDsp ? "DSP effect" : "effect"} '${effect.effectName}'`
+        );
+      });
+    });
 }
