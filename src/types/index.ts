@@ -1,3 +1,5 @@
+import type { DeviceType } from "@raphiiko/wavelink-ts";
+
 export type MixInfo = { id: string; name: string };
 
 export type OutputInfo = {
@@ -5,6 +7,7 @@ export type OutputInfo = {
   outputId: string;
   currentMixId: string;
   deviceName: string;
+  deviceType: DeviceType;
   isWaveDevice: boolean;
   outputName: string;
   level: number;
@@ -14,6 +17,8 @@ export type OutputInfo = {
 export type InputInfo = {
   deviceId: string;
   deviceName: string;
+  deviceType: DeviceType;
+  isWaveDevice: boolean;
   inputId: string;
   inputName: string;
   gain: number;

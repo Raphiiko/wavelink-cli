@@ -1,7 +1,7 @@
 {
   "name": "@raphiiko/wavelink-cli",
-  "version": "0.0.7",
-  "description": "Command line interface for Elgato Wave Link 3.0",
+  "version": "0.1.0",
+  "description": "Command line interface for Elgato Wave Link 3",
   "author": "Raphiiko",
   "license": "MIT",
   "homepage": "https://github.com/Raphiiko/wavelink-cli",
@@ -52,7 +52,7 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "@raphiiko/wavelink-ts": "^1.3.0",
+    "@raphiiko/wavelink-ts": "^2.0.0",
     "commander": "^14.0.2"
   }
 }

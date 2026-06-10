@@ -2,7 +2,7 @@ import { WaveLinkClient } from "@raphiiko/wavelink-ts";
 import { Argument, Command } from "commander";
 import { withClient } from "../services/client.js";
 import { requireOutput, requireMix } from "../services/finders.js";
-import { formatPercent, formatMuted } from "../utils/format.js";
+import { formatPercent, formatMuted, formatDeviceType } from "../utils/format.js";
 import { parsePercent } from "../utils/validation.js";
 
 export async function setOutputVolume(
@@ -42,7 +42,7 @@ export async function listOutputs(client: WaveLinkClient): Promise<void> {
     const isMain = device.id === mainOutput.outputDeviceId ? " (MAIN OUTPUT)" : "";
     console.log(`Device: ${device.name || device.id}${isMain}`);
     console.log(`  Device ID: ${device.id}`);
-    console.log(`  Wave Device: ${formatMuted(device.isWaveDevice)}`);
+    console.log(`  Device Type: ${formatDeviceType(device.deviceType)}`);
 
     if (device.outputs.length === 0) {
       console.log("  No outputs available");
@@ -87,6 +87,15 @@ export async function unassignOutputDevice(
   const output = await requireOutput(client, outputId);
   await client.removeOutputFromMix(output.deviceId, output.outputId);
   console.log(`Successfully unassigned output '${output.outputName}'`);
+}
+
+export async function setMainOutput(client: WaveLinkClient, outputId: string): Promise<void> {
+  const output = await requireOutput(client, outputId);
+  await client.setMainOutput({
+    outputDeviceId: output.deviceId,
+    outputId: output.outputId,
+  });
+  console.log(`Successfully set '${output.outputName}' as the main output device`);
 }
 
 export async function setSingleOutputForMix(
@@ -163,6 +172,14 @@ export function registerOutputCommands(program: Command): void {
       new Argument("<output-id-or-name>", "ID or name of the output device (case-insensitive)")
     )
     .action((outputId: string) => withClient((client) => unassignOutputDevice(client, outputId)));
+
+  outputCmd
+    .command("set-main")
+    .description("Set an output device as the main output")
+    .addArgument(
+      new Argument("<output-id-or-name>", "ID or name of the output device (case-insensitive)")
+    )
+    .action((outputId: string) => withClient((client) => setMainOutput(client, outputId)));
 
   outputCmd
     .command("set-volume")
