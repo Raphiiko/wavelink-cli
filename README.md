@@ -1,3 +1,7 @@
+# ARCHIVED
+
+This repository has been archived. After many months of trying to make Elgato's Wave Link work reliably for me, I gave up and switched to a different software audio mixer, and so this repository will not be updated any further.
+
 # @raphiiko/wavelink-cli
 
 [![npm version](https://img.shields.io/npm/v/@raphiiko/wavelink-cli.svg)](https://www.npmjs.com/package/@raphiiko/wavelink-cli)
